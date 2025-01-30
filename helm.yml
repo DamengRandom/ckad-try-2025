@@ -1,0 +1,56 @@
+# a template for kuberbenets resources definitions and depeloyments (All together in one template with values.yaml files !!)
+
+# Common commands:
+
+helm install TEMPLATE_NAME
+
+helm upgrade TEMPLATE_NAME
+
+helm rollback TEMPLATE_NAME
+
+helm uninstall TEMPLATE_NAME
+
+
+# Install helm
+
+# Linux: sudo snap install helm --clasic
+
+# MacOS: brew install helm
+
+
+# helm chart: a combination of yaml files which for deploy an app !!!
+
+- templates
+  - temp-1.yaml
+  - temp-2.yaml
+- values.yaml
+- Chart.yaml
+
+# we can create our own chart and publish via artifactHUB platform
+
+# helm search hub TEMPLATE_NAME (eg: wordpress) # search for helm charts for deployment usage !!
+
+# helm repo add bitnami https://charts.bitnami.com/bitnami # we add a bitnami as a platform which we can search the helm charts from this bitnami platform !!!
+
+# helm search repo TEMPLATE_NAME (eg: wordpress) # search for helm chart repository ~~
+
+# helm repo list # list exisiting repos
+
+# helm install [release-name] [chart-name] # try to download and install charts locally (most important command) !!!!!!!!!!!!!!!!
+
+# helm list # list installed packages
+
+# helm uninstall PACKAGE_NAME
+
+# helm pull --untar bitnami/wordpress # only download (not installed) helm charts and unzip those template files !!!!!!!
+
+# before download the charts, please run this comman to ensure you have all templates after added bitnami repository (Super important, don't miss it !!!)
+
+# helm repo update
+
+
+# Example commands:
+
+# helm install bravo bitnami/drupal # Install drupal helm chart from the bitnami repository.
+
+# another exmaple from tutorial: helm install mywebapp .

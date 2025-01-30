@@ -1,0 +1,35 @@
+appVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-deployment
+  labels:
+    app: myapp
+    type: front-end
+spec:
+  template:
+    metadata:
+      name: myapp-deployment-pod
+      labels:
+        app: myapp-deployment
+        type: front-end
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx
+  replicas: 3
+  selector:
+    matchLabels:
+      type: front-end
+
+# Common commands:
+# kubectl create -f deployment-definition.yml
+# kubectl get deployments
+# kubectl get replicaset
+# kubectl get pods # (replicaset will auto create pods !!!)
+# kubectl get all
+
+# kubectl create deployment webapp --image=kodekloud/webapp-color --replicas=3
+
+# kubectl expose pod redis --port=6379 --name=redis-service # edeploy service
+
+# kubectl create deployment redis-deploy -n dev-ns --image=redis --replicas=2

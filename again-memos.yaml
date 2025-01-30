@@ -1,0 +1,147 @@
+# kubectl expose pod redis --port=6379 --name redis-service
+
+# kubectl expose pod httpd --port=80 --name httpd --type=ClusterIP
+
+# kubectl get pods --selector env=dev
+
+# kubectl get all --selector env=prod
+
+# kubectl get svc -n critical-space
+# kubectl delete ingress pay-service-ingress -n critical-space
+
+# docker run python:3.6 cat /etc/*release*
+
+# kubectl config --kubeconfig=/root/my-kube-config use-context research # (Switch context !!!)
+
+# cat /etc/kubernetes/manifests/kube-apiserver.yaml #read kube-apiserver file
+
+# kubectl get pods --as dev-user
+
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: Role
+# metadata:
+#   namespace: default
+#   name: developer
+# rules:
+# - apiGroups: [""]
+#   resources: ["pods"]
+#   verbs: ["create", "delete", "list"]
+
+# ---
+# kind: RoleBinding
+# apiVersion: rbac.authorization.k8s.io/v1
+# metadata:
+#   name: dev-user-binding
+#   namespace: default
+# subjects:
+# - kind: User
+#   name: dev-user
+#   apiGroup: rbac.authorization.k8s.io
+# roleRef:
+#   kind: Role
+#   name: developer
+#   apiGroup: rbac.authorization.k8s.io
+
+
+# kubectl get clusterroles --no-headers | wc -l
+
+# remember give all perimissions if not mention: verbs: ["get", "watch", "list", "create", "delete"]
+
+# kubectl api-resources | grep storageclasses
+
+# ---
+# kind: ClusterRole
+# apiVersion: rbac.authorization.k8s.io/v1
+# metadata:
+#   name: storage-admin
+# rules:
+# - apiGroups: [""]
+#   resources: ["persistentvolumes"]
+#   verbs: ["get", "watch", "list", "create", "delete"]
+# - apiGroups: ["storage.k8s.io"]
+#   resources: ["storageclasses"]
+#   verbs: ["get", "watch", "list", "create", "delete"]
+
+# ---
+# kind: ClusterRoleBinding
+# apiVersion: rbac.authorization.k8s.io/v1
+# metadata:
+#   name: michelle-storage-admin
+# subjects:
+# - kind: User
+#   name: michelle
+#   apiGroup: rbac.authorization.k8s.io
+# roleRef:
+#   kind: ClusterRole
+#   name: storage-admin
+#   apiGroup: rbac.authorization.k8s.io
+
+
+# cat /etc/*release* !!!!!!!!!!!!!! Detect OS on machine ~ Must remember
+
+# helm pull --untar  bitnami/apache
+
+# kubectl exec -it kube-apiserver-controlplane -n kube-system -- kube-apiserver -h | grep 'enable-admission-plugins'
+
+# kubectl -n webhook-demo create secret tls webhook-server-tls --cert "/root/keys/webhook-server-tls.crt" --key "/root/keys/webhook-server-tls.key"
+
+# How to install kubectl-convert plugin !!!
+# curl -LO https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl-convert
+# ls
+# chmod +x kubectl-convert
+# mv kubectl-convert /usr/local/bin/kubectl-convert
+# kubectl-convert --help
+
+# How to use kubectl-convert to do some modifications
+# kubectl-convert -f ingress-old.yaml --output-version networking.k8s.io/v1
+# kubectl-convert -f ingress-old.yaml --output-version networking.k8s.io/v1 > ingress-new.yaml
+# kubectl create -f ingress-new.yaml
+# kubectl get ingress ingress-space -o yaml | grep apiVersion 
+
+
+# ---
+# apiVersion: apiextensions.k8s.io/v1
+# kind: CustomResourceDefinition
+# metadata:
+#   name: internals.datasets.kodekloud.com
+# spec:
+#   group: datasets.kodekloud.com
+#   versions:
+#     - name: v1
+#       served: true
+#       storage: true
+#       schema:
+#         openAPIV3Schema:
+#           type: object
+#           properties:
+#             spec:
+#               type: object
+#               properties:
+#                 internalLoad:
+#                   type: string
+#                 range:
+#                   type: integer
+#                 percentage:
+#                   type: string
+#   scope: Namespaced
+#   names:
+#     plural: internals
+#     singular: internal
+#     kind: Internal
+#     shortNames:
+#     - int
+
+# kubectl api-resources find out the KIND for traffic.controller/v1 
+
+# write the file now:
+
+# apiVersion: traffic.controller/v1
+# kind: Global
+# metadata:
+#   name: datacenter
+# spec:
+#   dataField: 2
+#   access: true
+
+# kubectl create -f crd.yaml
+

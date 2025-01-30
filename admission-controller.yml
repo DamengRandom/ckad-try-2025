@@ -1,0 +1,34 @@
+# AC (Admission Controller) is a dynamic plugin that intercepts API requests to the Kubernetes API server before the object is persisted in etcd, allowing the request to be modified, validated, or even denied. 
+
+# These controllers enforce security, compliance, and resource management policies across the cluster.
+
+# Commands
+
+# kue-apiserver -h | grep enable-admission-plugins # view all enabled admission controllers
+
+# kubectl exec -it kube-apiserver-controlplane -n kube-system -- kube-apiserver -h | grep 'enable-admission-plugins'
+
+# grep enable-admission-plugins /etc/kubernetes/manifests/kube-apiserver.yaml 
+
+# ps -ef | grep kube-apiserver | grep admission-plugins # To see all admissions
+
+# Configure Admission Webhook:
+
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: "pod-policy.example.com"
+webhooks:
+- name: "pod-policy.example.com"
+  clientConfig:
+    # url: "http://external-server.example.com"
+    service:
+      namespace: "webhook-namespace"
+      name: "webhook-service"
+      caBundle: "HASH_VALUE"
+  rules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      operations: ["CREATE"]
+      resources: ["pods"]
+      scope: "Namespaced"

@@ -1,0 +1,16 @@
+Ensure understand all impreative commands for creating keubernete resources 
+
+
+kubectl run nginx --image=nginx --restart=Never (run when creating pod)
+kubectl run nginx --image=nginx --restart=OnFailure (run when creating job)
+kubectl run nginx --image=nginx --restart=OnFailure --schedule="* * * * *" (run when creating cronjob)
+
+kubectl run nginx --image=nginx --restart=Never --port=80 --namespace=NAMESPACE_VALUE --command= --serviceaccount=SERVICE_ACCOUNT_NAME --env=HOSTNAME=local --labels=bu=finance, env=dev --requests='cpu=100m,memory=256Mi' --limits='cpu=200m,memory=512Mi' --dry-run -o yaml -- /bin/sh -c 'echo hellow world'
+
+kubectl run frontend --replicas=2 --lebls=run=load-balancer-example --image=busybox --port=8080
+
+kubectl expose deployment frontend --type=NodePort --name=frontend-service --port=6262 --target-port=8080
+
+kubectl set serviceaccount deployment frontend myuser
+
+kubectl create service clusterip my-cs --tcp=5678:8080 --dry-run -o yaml

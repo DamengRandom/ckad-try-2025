@@ -1,0 +1,38 @@
+docker security is for using user or set up some permissions for certain roles/users who can access the docker resources
+
+docker run --user=1000 ubuntu sleep 3600 // add user permission
+
+docker run --cap-add=MAC_ADMIN ubuntu // add role
+
+
+
+kubernetes can also do the docker security setup ~
+
+How?
+
+appVersion: v1
+Kind: Pod
+metadata:
+  name: web-pod
+spec:
+  securityContext: # global level
+    runAsUser: 1000
+  containers:
+  - name: ubuntu
+    image: ubuntu
+    command: ["sleep", "3600"]
+
+
+appVersion: v1
+Kind: Pod
+metadata:
+  name: web-pod
+spec:
+  containers:
+  - name: ubuntu
+    image: ubuntu
+    command: ["sleep", "3600"]
+    securityContext: # container level
+      runAsUser: 1000
+      capabilities:
+        add: ["MAC_ADMIN"]

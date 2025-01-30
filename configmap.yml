@@ -1,0 +1,21 @@
+appVersion: 1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  APP_COLOR: blue
+  APP_MODE: prod
+
+
+# ConfigMap is used to save the keubenetes key value pairs (configurations for the pods to read/use !!)
+
+# kubectl create configmap
+
+# kubectl get configmaps
+
+# kubectl describe configmaps
+
+
+# kubectl create configmap webapp-config-map \
+#   --from-literal=APP_COLOR=darkblue \
+#   --from-literal=APP_OTHER=disregard

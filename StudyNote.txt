@@ -1,0 +1,49 @@
+# Come back to Lecture 53, 
+
+- list down all command he has typed 
+
+- and list down all reasons why type those commands (what for)
+
+
+# Come back to Lecture 96,
+
+- check this yaml file: deployments-demo-must-learn.yml
+
+# API groups: In kubernetes, we categorize different apis by groups, which can do more specific job, check video 142 for details
+
+
+# This is the commands of all Kubernete API Resources: 
+
+kubectl api-resources
+
+# How to create a secret?
+
+kubectl -n webhook-demo create secret tls webhook-server-tls \
+> --cert "/root/keys/webhook-server-tls.crt" \
+> --key "/root/keys/webhook-server-tls.key"
+
+# API version + deprecation
+
+versions: alpha (bugs) -> beta (less bugs) -> official version (mostly no bugs, stable)
+
+Deprecation rule 1: only update the API by increasing api version, eg: v1 has /webinar api, but v2 will not have it. 
+
+Deprecation rule 2: v2 introduced a new field called duration, but v1 doesn't have it, so now, we need to add duration for v1, so now v1 and v2 are same now, which has same properties !!
+
+Deprecation rule 3: v1 cannot be deprecated before v2/alpha1 is released
+
+# Kubectl convert (different plugin, have to install)
+
+kubectl convert -f nginx.yml --output-version app/v1
+
+
+kubectl explain RESOURCE_NAME (eg: kubectl explain job)
+
+
+# etcd 
+
+It is a distributed key-value store that acts as the primary data store and source of truth for the cluster
+
+only custom resources (Custome Resource Definition [CRD]) (created) can be saved wthin etcd store !!
+
+build custom controller is easier to use Go lanaguage, more effficient and aesier

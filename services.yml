@@ -1,0 +1,52 @@
+# Kubernetes services: help us to connect with apps !!!!
+
+# Service types:
+
+# NodePort
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-service
+Spec:
+  type: NodePort
+  ports:
+    - targetPort: 80
+      port: 80
+      nodePort: 30008
+  selector: # provide list of labels to indentify the pod
+    app: myapp # now, we know which app is going to use the target port
+    type: front-end
+
+# please watch the video again and agin see which port is located where !!!!!
+
+# kubectl apply -f service-definition.yml
+# kubectl get services
+
+# Now we can type: curl 192.168.1.2:30008 to visit the pod from outside, all connected, because internally service port and pod target port are same which is 80 !!!
+# traffic will be forarded from 30008 to 80 and visit the pod app !!
+# Scope: Node has service & pods
+
+# ClusterIP
+apiVersion: v1
+kind: Service
+metadata:
+  name: back-end
+Spec:
+  type: ClusterIP # k8s would group all same pods within the same service together as an interface to talk to outside
+  ports:
+    - targetPort: 80
+      port: 80
+  selector: # provide list of labels to identify the pod
+    app: myapp # now, we know which app is going to use the target port
+    type: back-end
+
+# kubectl apply -f service-definition.yml
+# kubectl get services
+
+
+# Load Balancer
+
+
+
+# Service Endpoint: it refers each of pods teh service can identify (based on label/selectors) whether should redirect the traffic to those pods or not
+

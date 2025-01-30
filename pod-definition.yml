@@ -1,0 +1,44 @@
+apiVersion: v1
+
+kind: Pod
+
+metadata:
+  name: myapp-pod
+  labels:
+    app: myapp
+  annotations:
+    buildVersion: 1.2 # track for more app pod related information
+
+spec:
+  selector:
+    app: App1
+  containers:
+    - name: nginx-container
+      image: nginx
+
+    # - name; backend-container
+    #   image: redis
+
+
+# Common commands:
+
+# kubectl run  nginx-pod  --image=nginx:alpine
+
+# kubectl run custom-nginx --image=nginx --port=8080
+
+
+# svc: A shorthand alias for services. You can also use the full resource name, services, instead of svc.
+
+# kubectl replace --force -f pod.yaml # replace pod with new configs
+
+
+# pod labels & selectors are used to catgorize different group of resources !!!!!
+# classification purpose !!!!
+
+# kubectl get pods --selector app=App1
+
+# kubectl get pods --selector env=dev # get pods by selector
+
+# kubectl get pods --selector env=dev --no-headers | wc -l # count how many pods by selectors
+
+# kubectl get all --selector env=prod --no-headers # get all objects including pods by selectors

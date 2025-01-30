@@ -1,0 +1,26 @@
+# Node Affinity is a mechanism that allows you to control how pods are scheduled onto nodes based on the labels of the nodes.
+appVersion: v1
+kind: Pod
+metadata:
+  name: node-affinity
+spec:
+  containers:
+  - name: node-affinity
+    image: node-affinity
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      # can also be perferredDuringSchedulingIgnoredDuringExecution: difference with above one: only on execution
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: size
+              operator: In # can also be NotIn, Exists
+              values:
+              - Large # can also be Small
+
+
+# Common comamnds
+
+# kubectl label nodes node-1 size=large # node selector
+
+# kubectl logs app -n elastic-stack # check logs ~

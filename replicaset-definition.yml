@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: myapp-replicaset
+  labels:
+    name: myapp
+    type: front-end
+spec:
+  template:
+    metadata:
+      name: myapp-pod
+      labels:
+        name: myapp
+        type: front-end
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx
+  replicas: 3
+  selector:
+    matchLabels:
+      type: front-end
+
+# kubectl create -f replicaset-definition.yml
+# kubectl get replicaset
+# kebuctl get pods # you will see 3 pods running now ~
+
+
+# Labels vs Selectors:
+
+# Its like a scope, so as long as we define the labels type eg: front-end, the replicaset will be able to watching these resources
+
+# kubectl scale --replicas=6 -f replicaset-definition.yml
+
+
+
+# Common commands:
+
+# kubectl create -f replicaset-definition.yml
+# kubectl get replicaset
+# kubectl delete replicaset myapp-replicaset
+# kubectl replace -f replicaset-definition.yml
+# kubectl scale --replicas=6 -f replicaset-definition.yml
+
+# kubectl scale rs new-replica-set --replicas=5

@@ -1,0 +1,123 @@
+# Authorization:
+
+# ABAC: Attribute Based Access Control
+
+# RBAC: Role Based Access Control
+
+# ABAC or RBAC is able to determine which user or service accounts can perform actions on kubernete resources !!!!
+
+# ABAC policy example: (Drawback: hard to scale, when policies grows based on number of users, hard to manage)
+
+{
+  apiVersion: "abac.authorization.kubernetes.io/v1beta1"
+  "kind": "Policy",
+  "spec": {
+    "user": "jane",
+    "namespace": "dev",
+    "resource": "pods",
+    "verb": "create"
+  }
+}
+
+# RBAC policy example: reduced complexity
+
+{
+  apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    namespace: dev
+    name: pod-manager
+  rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["create", "delete", "update", "list", "get"]
+}
+
+# RoleBinding RBAC example: assign a role to a specific namespace 
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: bind-pod-manager
+  namespace: dev
+subjects:
+- kind: User
+  name: jane
+  apiGroup: ""
+roleRef:
+  kind: Role
+  name: pod-manager
+  apiGroup: rbac.authorization.k8s.io
+
+# Cluster role RBAC example: define cluster wide permissions across all namespaces
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cluster-admin
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
+
+# ClusterRoleBinding RBAC example: assign a cluster role to a specific user 
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: bind-cluster-admin
+subjects:
+- kind: User
+  name: admin
+  apiGroup: ""
+roleRef:
+  kind: ClusterRole
+  name: clsuter-admin
+  apiGroup: rbac.authorization.k8s.io
+
+
+# Common commands:
+
+# kubectl get roles
+# kubectl get rolebindings
+# kubectl describe role ROLE_NAME
+# kubectl describe rolebinding ROLE_BINDING_NAME
+
+# kubectl auth can-i create deployments # check whether I can do this command via kube api or not
+# kubectl auth can-i delete nodes --as dev-user
+
+# kubectl get roles -A --no-headers | wc -l # counting how many roles we have for all namespaces
+
+# kubectl get role kube-proxy -n kube-system -o yaml 
+
+# kubectl get pods --as dev-user # whether dev-user has the permission to run command kubectl get pods
+
+# kubectl create role developer --verb=list,create,delete --resource=pods # create a role !!
+
+# kubectl create rolebinding dev-user-binding --role=developer --user=dev-user # create a role binding !!
+
+# kubectl edit role developer -n blue
+
+# kubectl --as dev-user create deployment nginx --image=nginx -n blue
+
+# kubectl get clusterrolebindings | grep cluster-admin
+# kubectl describe clusterrolebindings cluster-admin 
+
+# kubectl describe clusterrole cluster-admin
+
+
+# kubectl create clusterrole michelle-role --verb=get,list,watch --resource=nodes @ create a role with permissions !!!
+# kubectl create clusterrolebinding michelle-role-binding --clusterrole=michelle-role --user=michelle # role binding the role !!!
+
+
+# kubectl create clusterrolebinding michelle-storage-admin --user=michelle --clusterrole=storage-admin
+# kubectl describe clusterrolebinding michelle-storage-admin
+
+# Requirements:
+
+# ClusterRole: storage-admin
+# Resource: persistentvolumes
+# Resource: storageclasses
+# ClusterRoleBinding: michelle-storage-admin
+# ClusterRoleBinding Subject: michelle
+# ClusterRoleBinding Role: storage-admin

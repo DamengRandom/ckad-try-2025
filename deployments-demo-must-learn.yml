@@ -1,0 +1,49 @@
+# kubectl get all # get all kubernetes objects
+
+# kubectl create -f deployment-definition.yml # create a deployment
+
+# kubectl rollout status deployment/myapp-deployment # myapp-deployment is the deployment name, check rollout status
+
+# kubectl delete deployment myapp-deployment # delete named myapp-deployment deployment resource !!
+
+# kubectl create -f deployment-definition.yml --record # deployment with a new flag: record
+
+# kubectl rollout history deployment/myapp-deployment # check history of revisions ~
+
+# the demoer has changed the nginx version from nginx to nginx:1.12, then he applied his changes
+# kubectl apply -f deployment-definition.yml
+
+# kubectl rollout status deployment/myapp-deployment # check status again
+
+# kubectl get pods # check pods 
+
+# kubectl describe deployment # check deployment in detail
+
+# kubectl rollout history deployment/myapp-deployment # now, we have 2 different history record we can revision with
+
+# kubectl set image deployment/myapp-deployment nginx-container=nginx:1.12-perl # updated the nginx image version now 
+
+# kubectl rollout status deployment/myapp-deployment # check status again 
+
+# kubectl rollout history deployment/myapp-deployment # now we have 3 revisions since we have just updated the nginx image version 
+
+# Now imgine, we have something wrong with version nginx:1.12-perl, we want to rollback to previous version
+
+# kubectl rollout undeo deployment/myapp-deployment # now we just rollback to previous version which is revision 2 !!!!!!
+
+# kubectl rollout history deployment/myapp-deployment # Now, we have number 4 revision which is actually the revision 2, but it becomes a new record as revision 4 (revision 2 and 4 are same !!!!!).
+
+# the demoer has changed the nginx version from nginx to nginx:1.15-err, (actually the image does not exist), but he applied his changes
+# kubectl apply -f deployment-definition.yml --record
+
+# kubectl rollout status deployment/myapp-deployment # check status again, but now stuck, because of that nginx image was wrong (does not exist)
+
+# kubectl get deployment # desired 6, but available only 5, because one deployment won't work
+
+# kubectl get pods # check pods 
+
+# kubectl rollout history deployment/myapp-deployment # now, revision 5 has been created, but not working, because the aimed nginx image does not work (video can see the big difference)
+
+# kubectl rollout undeo deployment/myapp-deployment # now, revision to 4, because 5 is not working, so we have number 6 revision now
+
+# end

@@ -1,0 +1,14 @@
+# NO CKAD exam required
+
+# What is stateful?
+
+# In Kubernetes, a StatefulSet is a workload API object used to manage stateful applications. Unlike a Deployment, which manages stateless applications, a StatefulSet is designed for applications that require persistent storage, ordered deployment, unique network identities, or stable pod-to-storage relationships.
+
+# Deployment will be in order, create one by one ~
+
+# StatefulSet must defint service name !!!!
+
+
+# Kubenetes Headless Services
+
+# a headless service is a special type of service that does not allocate a ClusterIP. Instead of providing load balancing or proxying, it allows direct access to the underlying Pods, typically through DNS resolution.

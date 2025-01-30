@@ -1,0 +1,33 @@
+#  get kubeconfigs
+
+# kubectl get pods --kubeconfig config
+# kubectl config view
+# kubectl config use-context research --kubeconfig /root/my-kube-config # set current context
+
+# kubeconfig has 3 sections:
+
+# - clusters
+# - contexts
+# - users
+
+apiVersion: v1
+kind: Config
+clusters:
+- name: my-kube-playground
+  cluster:
+    # certificate-authority: etc/kubernetes/pki/ca.crt 
+    server: https://my-kube-playground:6443
+    certificate-authority-data: SUPER_LONG_BASE_64_TEXT_STRING # we can convert the content to base64: cat ca.crt | base64 # we can also decode the data: echo "SUPER_LONG_BASE_64_TEXT_STRING" | base64 --decode
+
+contexts:
+- name: my-kube-admin@my-kube-playground
+  context:
+    cluster: my-kube-playground # link cluster
+    user: my-kube-ad # link user
+
+users:
+- name: my-kube-ad
+  user:
+    client-certificate: admin.crt
+    client-key: etc/kubernetes/pki/admin.key # better user full path
+

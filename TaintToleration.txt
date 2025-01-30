@@ -1,0 +1,37 @@
+Taints and Tolerations are mechanisms used to control how pods are scheduled onto nodes. They work together to ensure that only specific pods can run on specific nodes, based on certain conditions or constraints.
+
+Taint: on nodes, Restrict which pods can run on a node.
+
+Tolerations: on pods, A toleration is a property applied to a pod that allows it to run on a node with a matching taint.
+
+
+Common commands
+
+kubectl taint nodes node-name key=value:taint-effect
+
+eg: kubectl taint nodes node1 app=blue:NoSchdule
+
+kubectl describe node kubemaster | grep Taint
+
+kubectl taint node controlplane node-role.kubernetes.io/control-plane:NoSchedule-
+# node/controlplane untainted
+# dash means untaint action
+
+kubectl get pods -o wide
+
+
+Toleration config example:
+
+appVersion: v1
+kind: Pod
+metadata:
+  name: myapp-pod
+spec:
+  containers:
+  - name: myapp-pod
+    image: myapp-pod
+  tolerations:
+  - key: "app"
+    operator: "Equal"
+    value: "blue"
+    effect: "NoSchdule"

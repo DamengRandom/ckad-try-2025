@@ -1,0 +1,32 @@
+# If app is down, rolback !!
+
+# App never goes down, 
+# old goes down and new goes up, 
+# or new goes down (because new one is broken naturally or some othger factors),
+# now old goes up for back up, ensure pod always get one version of app to run
+
+# Common commands
+
+# kubectl rollout undo deployment/myapp-deployment # app is back to older version !!
+
+# Quick 5:
+# # Create deployment
+# kubectl create -f deployment-definition.yml
+
+# # Get deployments
+# kubectl get deployments
+
+# # Update deployment
+# kubectl apply -f deployment-definition.yml
+
+# # Update deployment image
+# kubectl set image deployment/myapp-deployment nginx=nginx:1.9.1
+
+# # Rollout status
+# kubectl rollout status deployment/myapp-deployment
+
+# # Rollout to a specific version from history
+# kubectl rollout history deployment/myapp-deployment --revision=1 (1 means version 1 !!!!)
+
+# # Rollback
+# kubectl rollout undo deployment/myapp-deployment

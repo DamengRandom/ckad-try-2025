@@ -1,0 +1,173 @@
+# Whats/Why Ingress?
+
+# It is a kubernetes resource which manages external access to services within a cluster (eg: HTTP/HTTPS traffics)
+
+# It provides a way to expose multiple services through a single IP address while defining routing rules !!!!!
+
+# - Solution you deployed: Ingress Controller
+
+# - Set of rules you configured: Ingress Resources
+
+
+apiVersion: extensions/vbeta1
+kind: Deployment
+metadata:
+  name: nginx-ingress-controller
+spec:
+  replicas: 1
+  selector:
+    matchLaels:
+      name: nginx-ingress
+  template:
+    metadata:
+      labels:
+        name: nginx-ingress
+    spec:
+      containers:
+        - name: nginx-ingress-controller
+          image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.21.0
+      args:
+        - /nginx-ingress-controller
+      env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_CONTAINERS
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+      ports:
+        - name: http
+          containerPort: 80
+        - name: https
+          containerPort: 443
+
+# We also created a ConfigMap for link the configurations for ingress controller
+appVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-configuration
+
+# We also need a ServiceAccount for authentication purpose
+appVersion: v1
+kind: ServiceAccount
+metadata:
+  name: nginx-ingress-serviceaccount
+
+# We also create a Service to link ingress controller
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-ingress
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: http
+    - port: 443
+      targetPort: 443
+      protocol: TCP
+      name: https
+  selector:
+    name: nginx-ingress
+
+
+# Until now, all ingress controller configurations are done properly
+
+# Now, we need to configure ingress resources
+# Create a file called: Ingress-wear.yml (Version 1: with serviceName + servicePort configurations)
+apiVersion: extentions/vbeta1
+kind: Ingress
+metadata:
+  name: ingress-wear
+spec:
+  backend:
+    serviceName: wear-service
+    servicePort: 80
+# Create a file called: Ingress-wear.yml (Version 2: with service configurations)
+apiVersion: extentions/vbeta1
+kind: Ingress
+metadata:
+  name: ingress-wear
+spec:
+  backend:
+    service:
+      name: wear-service
+      port: 
+        number: 80
+
+# kubectl create -f Ingress-wear.yml
+# kubectl get ingress
+
+# We have different rules and each rule we have different paths to redirect to different urls (video shown)
+
+# Create a file called: Ingress-wear-watch.yml (Version 1: only has 1 rule)
+apiVersion: extentions/vbeta1
+kind: Ingress
+metadata:
+  name: ingress-wear-watch
+spec:
+  rules:
+      http:
+        paths:
+        - path: /wear
+          backend:
+            serviceName: wear-service
+            servicePort: 80
+        - path: /watch
+          backend:
+            serviceName: watch-service
+            servicePort: 80
+
+# Create a file called: Ingress-wear-watch.yml (Version 2: has 2 rules)            
+apiVersion: extentions/vbeta1
+kind: Ingress
+metadata:
+  name: ingress-wear-watch
+spec:
+  rules:
+    - host: wear.my-online-store.com
+      http:
+        paths:
+        - path: /wear
+          backend:
+            serviceName: wear-service
+            servicePort: 80
+    - host: watch.my-online-store.com
+      http:
+        paths:
+        - path: /watch
+            serviceName: watch-service
+            servicePort: 80
+
+# kubectl describe ingress ingress-wear-watch
+
+# From kubernetes API version 1.20+, we can create ingress resource in an imperative way:
+# kubectl create ingress <ingress-name> --rule="host/path=service:port"
+# Eg: kubectl create ingress ingress-test --rule="wear.my-online-store.com/wear*=wear-service:80"
+
+
+# Crrate ingress (imprative example):
+
+# kubectl create ingress ingress-pay -n critical-space --rule="/pay=pay-service:8282"
+
+# kubectl edit ingress ingress-pay -n critical-space 
+
+# Put some annotations to make /pay path working, put it into ingress-pay resource file
+
+# annotations:
+#     nginx.ingress.kubernetes.io/rewrite-target: /
+
+# Ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
+
+
+# kubectl describe role ingress-nginx -n ingress-nginx # describe the role
+
+# kubectl get rolebindings -n ingress-nginx # check how many roles bound with current namespace
+
+# kubectl create configmap ingress-nginx-controller -n ingress-nginx # create service configmap
+
+# kubectl create serviceaccount ingress-nginx -n ingress-nginx # create service account

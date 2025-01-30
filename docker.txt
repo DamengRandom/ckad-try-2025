@@ -1,0 +1,5 @@
+Commands: 
+
+docker run python:3.6 cat /etc/os-release # check docker image os
+
+docker run -p 8383:8080 webapp-color:lite # 8383 is host port, and 8080 is container port

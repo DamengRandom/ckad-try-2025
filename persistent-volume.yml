@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-vol1
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 1Gi
+  # hostPath:
+  #   path: /tmp/data
+  awsElasticBlockStore:
+    volumeID: <volume-id>
+    fsType: ext4
+
+# kubectl create pv-definition.yml
+# kubectl get persistentvolume
+
+
+
+# Persistent Volume Claim (PVC)
+
+# PVC is a request for storage by a user. It acts as a bridge between a Persistent Volume (PV) and a Pod, allowing a Pod to access storage in a Kubernetes cluster.
+
+appVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: myclaim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Mi
+
+# kubectl create pv-definition.yml
+# kubectl get persistentvolumeclaim
+# kubectl delete persistentvolumeclaim myclaim
+
+persistentVolumeReclaimPolicy: Retain # means volume will be kept, cannot be reused
+persistentVolumeReclaimPolicy: Delete # means volume will be free, can be reused
+persistentVolumeReclaimPolicy: Recycle # means volume will be scrapt, before maing it available

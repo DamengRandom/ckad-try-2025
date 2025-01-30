@@ -1,0 +1,7 @@
+# Just rememebr Canary:
+
+# route traffic to both versions
+
+# Route a small percentage of traffic to version 2 (just for myapp-primaryyml set labels version to v1 + replicas: 5 + image name to myapp-image:1.0, and myapp-canary.yml set labels version to v2 + replicas: 1 + image name to myapp-image:2.0)
+
+# (check video: https://www.udemy.com/course/certified-kubernetes-application-developer/learn/lecture/28855932#notes)
