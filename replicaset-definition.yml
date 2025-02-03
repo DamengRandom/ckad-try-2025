@@ -43,3 +43,26 @@ spec:
 # kubectl scale --replicas=6 -f replicaset-definition.yml
 
 # kubectl scale rs new-replica-set --replicas=5
+
+
+# - Deployment:
+
+# Used for managing stateless applications.
+
+# Ensures a specified number of Pod replicas are running.
+
+# Supports advanced features like rolling updates and rollbacks.
+
+# - ReplicaSet:
+
+# Ensures a specified number of Pod replicas are running.
+
+# Does not support rolling updates or rollbacks.
+
+# Typically used indirectly via Deployments.
+
+# - DaemonSet:
+
+# Ensures a copy of a Pod runs on every node (or a subset of nodes) in the cluster.
+
+# Used for node-specific workloads like logging, monitoring, or networking.

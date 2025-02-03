@@ -53,5 +53,7 @@ spec:
 
 # The kubelet is a critical component of a Kubernetes node. It is responsible for managing the state of pods and containers on a node, ensuring they are running as expected. 
 
+# Kubelet is an essential component of Kubernetes. It is an agent that runs on each node in a Kubernetes cluster and ensures that the containers in Pods are running as expected.
+
 # kubectl top node # check node cpu / memory usage
 # kubectl top pod # check pod cpu / memory usage

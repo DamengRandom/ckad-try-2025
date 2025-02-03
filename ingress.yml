@@ -171,3 +171,6 @@ spec:
 # kubectl create configmap ingress-nginx-controller -n ingress-nginx # create service configmap
 
 # kubectl create serviceaccount ingress-nginx -n ingress-nginx # create service account
+
+
+# the "rewrite-target" annotation is used in Ingress resources to modify the URL path of incoming requests before they are forwarded to the backend service. This is particularly useful when the backend service expects a different URL path than the one requested by the client.

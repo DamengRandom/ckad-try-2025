@@ -50,3 +50,4 @@ Spec:
 
 # Service Endpoint: it refers each of pods teh service can identify (based on label/selectors) whether should redirect the traffic to those pods or not
 
+# Good Service explanantion (Check the diagram !!!!!!): https://www.udemy.com/course/certified-kubernetes-application-developer/learn/lecture/12299468#overview
