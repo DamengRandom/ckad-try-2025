@@ -1,0 +1,68 @@
+Helm
+
+Q1 My Answer
+
+helm create chart-test // corrected
+
+
+
+Q2 My Answer
+
+helm run chart-test // wrong
+helm install -f myvalues.yaml myredis ./redis // corrected
+
+
+
+Q3 My Answer
+
+helm list -A // wrong
+helm list --pending -A // corrected
+
+
+
+Q4 My Answer
+
+helm uninstall chart-test -n namespace
+
+
+
+Q5 My Answer
+
+helm upgrade -f myvalue.yaml -f overwrite.yaml redis ./redis // corrected
+
+
+
+Q6 My Answer
+
+helm use chart-test // wrong
+
+helm repo add/update/list/remove ... // check with --help command
+
+
+
+Q7 My Answer
+
+helm pull chart-URL // corrected
+helm pull --untar chart-name // corrected
+
+
+
+Q8 My Answer
+
+helm add repo bitnami https://charts.bitnami.com/bitnami 
+
+
+
+Q9 My Answer
+
+helm show values bitnami/node // corrected
+
+
+
+Q10 My Answer
+
+helm install bitnami/node --replicas=5 // wrong
+
+helm show values bitnami/node | grep -i replica // missing - check replica count
+
+helm install mynode bitnami/node --set replicaCount=5 // corrected

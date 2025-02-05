@@ -1,0 +1,139 @@
+Observability
+
+Q1: My Answer
+
+nano live.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    imagePullPolicy: IfNotPresent // missing
+    resources: {} // missing
+    livenessProbe:
+      exec:
+        command:
+        - ls
+      initialDelaySeconds: 5
+      periodSeconds: 5
+  dnsPolicy: ClusterFirst // missing
+  restartPolicy: Never // missing
+status: {}
+
+k create -f live.yaml
+
+k describe po nginx | grep -i liveness
+
+k delete po nginx
+
+
+
+Q2: My Answer
+
+nano live.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    imagePullPolicy: IfNotPresent
+    resources: {}
+    livenessProbe:
+      exec:
+        command:
+        - ls
+      initialDelaySeconds: 5 // added
+      periodSeconds: 5 // added
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never 
+status: {}
+
+k create -f live.yaml
+
+k describe po nginx | grep -i liveness
+
+k delete po nginx
+
+
+
+Q3: My Answer
+
+nano read.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null // missing
+  name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    resources: {} // missing
+    ports:
+    - containerPort: 80
+    readinessProbe:
+      httpGet:
+        path: /
+        port: 80
+  dnsPolicy: ClusterFirst // missing
+  restartPolicy: Never // missing
+status: {} // missing
+
+k create -f read.yaml
+
+k get po nginx | grep -i readiness
+
+k delete po nginx
+
+
+
+Q4: My Answer
+
+NO IDEA
+
+
+
+Q5: My Answer
+
+k run busybox --image=busybox --restart=Never -- /bin/sh -c 'i=0; while true; do echo "$i: $(date)"; i=$((i+1)); sleep 1; done'
+
+
+
+Q5: My Answer
+
+k run busybox --image=busybox --restart=Never -- /bin/sh -c 'ls /notexist'
+
+k logs busybox // missing
+
+k describe po busybox
+
+k delete po busybox
+
+
+
+Q6: My Answer
+
+k run busybox --image=busybox --restart=Never -- notexist
+
+k logs busybox
+
+k describe po busybox
+
+k get events | grep -i error // missing
+
+k delete po busybox --force --grace-period=0 // remember its --grace-period=0 !!!
+
+
+
+Q7: My Answer
+
+k top nodes
