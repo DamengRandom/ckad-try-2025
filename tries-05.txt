@@ -1,0 +1,41 @@
+Configuration
+
+- ConfigMap
+
+Q1 Answer
+
+
+
+
+
+- SecurityContext
+
+Q1 Answer
+
+
+
+
+
+- Requests and Limits
+
+Q1 Answer
+
+
+
+
+
+- Secrets
+
+Q1 Answer
+
+
+
+
+
+- Service Accounts
+
+Q1 Answer
+
+
+
+
