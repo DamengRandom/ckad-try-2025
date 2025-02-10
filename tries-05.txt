@@ -4,7 +4,134 @@ Configuration
 
 Q1 Answer
 
+k create cm config --from-literal=foo=lala --from-literal=foo2=lolo
 
+
+
+Q2 Answer
+
+k describe cm config
+
+
+
+Q3 Answer
+
+k create cm config --from-file=config.txt
+k get cm config -o yaml // missing
+
+
+
+Q4 Answer
+
+k create cm config --from-env-file=config.env
+k get cm config -o yaml // missing
+
+
+
+Q5 Answer
+
+k create cm config4 --from-file=config4.txt --from-literal=key=special // wrong
+k create cm config4 --from-file=config4.txt // corrected
+k get cm config4 -o yaml // missing
+
+
+
+Q6 Answer
+
+k create cm options --from-literal=var5=val5
+k run nginx --image=nginx --restart=Never --env=var5 // wrong
+
+k run nginx --image=nginx --restart=Never -o yaml > pod.yaml
+
+POD config: // totally missed [This is for simgle env connection]
+
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    env:
+    - name: option # name of the env variable
+      valueFrom:
+        configMapKeyRef:
+          name: options # name of config map
+          key: var5 # name of the entity in config map
+
+kubectl create -f pod.yaml
+
+
+
+Q7 Answer
+
+k create cm anotherone --from-literal=var6=val6 --from-literal=var7=val7
+k run nginx --image=nginx --restart=Never -o yaml > pod2.yaml
+
+POD configs:
+
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    env:
+    - name: option6
+      valueFrom:
+        configMapKeyRef:
+          name: anotherone # name of config map
+          key: var6 # name of the entity in config map
+    - name: option7
+      valueFrom:
+        configMapKeyRef:
+          name: anotherone # name of config map
+          key: var7 # name of the entity in config map
+
+Above are wrong, please use below for multipel envs (corrected version)
+
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    envFrom: # different than previous one, that was 'env'
+    - configMapRef: # different from the previous one, was 'configMapKeyRef'
+        name: anotherone # the name of the config map
+
+kubectl create -f pod2.yaml
+
+
+
+Q8 Answer
+
+k create cm cmvolume --from-literal=var8=val8 --from-literal=var9=val9
+
+k run nginx --image=nginx --restart=Never --dry-run=client -o yaml > pod3.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: nginx
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    resources: {}
+    volumeMounts:
+    - name: config-vol
+      mountPath: /etc/lala
+  volumes:
+    - name: config-vol
+      configMap:
+        name: cmvolume
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+status: {}
+
+kubectl create -f pod3.yaml
+
+k exec -it nginx -- /bin/sh // missing
+cd /etc/lala // missing
+ls // missing
+cat var8 // missing
 
 
 
@@ -12,15 +139,192 @@ Q1 Answer
 
 Q1 Answer
 
+k run nginx --image=nginx --restart=Never --dry-run=client -o yaml > sc.yaml
+nano sc.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-context
+spec:
+  securityContext:
+    runAsUser: 101
+  containers:
+  - name: sec-ctx-demo
+    image: nginx
 
 
 
+Q2 Answer
 
-- Requests and Limits
+nano sc2.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-context-pod
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    securityContext:
+      capabilities:
+        add: ["NET_ADMIN", "SYS_TIME"]
+
+
+
+- Resource requests and limits
 
 Q1 Answer
 
+nano rl.yaml
 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rl-one
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "256Mi"
+      limits:
+        cpu: "200m"
+        memory: "512Mi"
+
+k create -f rl.yaml
+
+
+
+- Limit Ranges
+
+Q1 Answer
+
+nano lr.yaml
+
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: cpu-resource-constraint
+  namespace: limitrange // missing !!!
+spec:
+  limits:
+  - max: # max and min define the limit range
+      memory: "500Mi"
+    min:
+      memory: "100Mi"
+    type: Container // wrong
+    type: Pod // Corrected
+
+k create -f lr.yaml
+
+
+
+Q2 Answer
+
+k describe limitrange cpu-resource-constraint -n limitrange
+
+
+
+Q3 Answer
+
+nano pl.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pl-one
+  namespace: limitrange
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    resources:
+      requests:
+        memory: "250Mi"
+      limits: // can put in as well
+        memory: "500Mi" // can put in as well
+
+k create -f pl.yaml
+
+
+
+- Resource Quotas
+
+Q1 Answer
+
+kubectl create quota my-quota --hard=cpu=1,memory=1G --hard-limits=cpu=2,memory=2G // wrong
+
+nano quota.yaml
+
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: my-rq
+  namespace: one
+spec:
+  hard:
+    requests.cpu: "1"
+    requests.memory: 1Gi
+    limits.cpu: "2"
+    limits.memory: 2Gi
+
+k create -f quota.yaml
+
+
+
+Q2 Answer
+
+nano quota2.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: quota2
+  namespace: one
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    resources:
+      requests:
+        cpu: "2"
+        memory: "3Gi"
+      limits:
+        cpu: "3"
+        memory: "4Gi"
+
+k create -f quota2.yaml
+
+
+
+Q3 Answer
+
+nano quota3.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: quota2
+  namespace: one
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    resources:
+      requests:
+        cpu: "0.5"
+        memory: "1Gi"
+      limits:
+        cpu: "1"
+        memory: "2Gi"
+
+k create -f quota3.yaml
+
+kubectl get resourcequota -n one // missing
 
 
 
@@ -28,14 +332,187 @@ Q1 Answer
 
 Q1 Answer
 
+kubectl create secret generic mysecret --from-literal=password=mypass
 
 
+
+Q2 Answer
+
+kubectl create secret generic mysecret2 --from-file=username
+
+
+
+Q3 Answer
+
+k get secret mysecret2 -o yaml
+
+
+
+Q4 Answer
+
+nano sec-pod.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secret-pod
+spec:
+  volumes:
+    - name: secret-volume
+      secret:
+        secretName: mysecret2
+  containers:
+    - name: nginx
+      image: nginx
+      volumeMounts:
+        - name: secret-volume
+          mountPath: /etc/foo
+
+k create -f sec-pod.yaml
+
+k exec -it secret-pod -- /bin/sh // missing
+ls /etc/foo // missing
+cat /etc/foo/username // missing
+
+
+
+Q5 Answer
+
+k delete po secret-pod
+
+nano sec-pod2.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secret-pod-new
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    env:
+    - name: USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: mysecret2
+          key: username
+
+k create -f sec-pod2.yaml
+
+k exec -it nginx -- env | grep USERNAME | cut -d '=' -f 2 # check/read the evnrionemnt variable !!!!!
+
+
+
+Q6 Answer
+
+k create secret generic ext-service-secret --from-literal=API_KEY=LmLHbYhsgWZwNifiqaRorH8T -n secret-ops
+
+
+
+Q7 Answer
+
+nano sec-pod3.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: consumer
+  namespace: secret-ops
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    env:
+    - name: SECRET_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: ext-service-secret
+          key: API_KEY
+
+k create -f sec-pod3.yaml
+
+k exec -it consumer -n secret-ops -- env | grep API_KEY
+
+
+
+Q8 Answer
+
+k create secret generic my-secret -n secret-ops --type=kubernetes.io/ssh-auth --from-env-file=id_rsa --from-literal=ssh-privatekey // wrong
+k create secret generic my-secret -n secret-ops --type="kubernetes.io/ssh-auth" --from-file=ssh-privatekey=id_rsa // corrected !!!!!
+
+
+
+Q9 Answer
+
+nano sec-pod4.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: consumer
+  namespace: secret-ops
+spec:
+  volumes:
+    - name: secret-volume
+      secret:
+        secretName: mysecret2
+        optional: true
+  containers:
+    - name: nginx
+      image: nginx
+      volumeMounts:
+        - name: secret-volume
+          mountPath: /var/app
+          readOnly: true // missing
+
+k create -f sec-pod4.yaml
+
+k exec -it consumer -n secret-ops -- /bin/sh
+ls /var/app
+cat /var/app/mysecret2
+exit // missing
 
 
 - Service Accounts
 
 Q1 Answer
 
+k get sa -A
 
 
 
+Q2 Answer
+
+k create sa myuser 
+
+
+
+Q3 Answer
+
+k run nginx --image=nginx --restart=Never -o yaml > pod.yaml
+
+nano pod.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  serviceAccount: myuser
+  containers:
+  - name: nginx
+    image: nginx
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+status: {}
+
+k replace -f pod.yaml
+
+
+
+Q4 Answer
+
+// no idea how to do
+
+k create token myuser // Memo PLS !!!!!!!
