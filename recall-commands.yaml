@@ -1,0 +1,91 @@
+# k get all --show-labels
+
+# Memo for network policy, no doc can be viewed soon
+
+# apiVersion: networking.k8s.io/v1
+# kind: NetworkPolicy
+# metadata:
+#   name: internal-policy
+#   namespace: default
+# spec:
+#   podSelector:
+#     matchLabels:
+#       name: internal
+#   policyTypes:
+#   - Egress
+#   - Ingress
+#   ingress:
+#     - {}
+#   egress:
+#   - to:
+#     - podSelector:
+#         matchLabels:
+#           name: mysql
+#     ports:
+#     - protocol: TCP
+#       port: 3306
+
+#   - to:
+#     - podSelector:
+#         matchLabels:
+#           name: payroll
+#     ports:
+#     - protocol: TCP
+#       port: 8080
+
+#   - ports:
+#     - port: 53
+#       protocol: UDP
+#     - port: 53
+#       protocol: TCP
+
+
+# Docker:
+
+# docker run -p 8282:8080 webapp-color 
+
+# Question: What is the base Operating System used by the python:3.6 image?
+
+# Answer: docker run python:3.6 cat /etc/*release*
+
+# How to run docker image !!!!!
+# docker run -p 8282:8080 webapp-color
+
+
+# kubeconfig switch
+
+# kubectl config --kubeconfig=/root/my-kube-config use-context research
+
+# check account allowcated to that role:
+# kubectl describe rolebinding kube-proxy -n kube-system
+
+
+# DOn't forget to edit the role resource name !!!!!!
+# kubectl edit role developer -n blue
+
+
+# Create a new role !!!!
+
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: Role
+# metadata:
+#   name: developer
+#   namespace: blue
+# rules:
+# - apiGroups:
+#   - apps
+#   resourceNames:
+#   - dark-blue-app
+#   resources:
+#   - pods
+#   verbs:
+#   - get
+#   - watch
+#   - create
+#   - delete
+# - apiGroups:
+#   - apps
+#   resources:
+#   - deployments
+#   verbs:
+#   - create
